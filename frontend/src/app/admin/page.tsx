@@ -203,7 +203,27 @@ export default function AdminPage() {
 
     {tab === "banner" && (
       <div className="bg-as-gray p-6 rounded-xl max-w-2xl space-y-4">
-        <h3 className="text-lg font-bold">Imagem do Banner</h3>
+    <h3 className="text-lg font-bold">Configuração do Banner</h3>
+    <div className="space-y-1">
+      <label className="block text-xs text-gray-300 font-semibold">Título do Banner</label>
+      <input
+        type="text"
+        placeholder="Ex.: Os tênis mais desejados do Brasil"
+        className="input w-full"
+        value={banner?.title || ""}
+        onChange={(e) => setBanner((prev: any) => ({ ...prev, title: e.target.value }))}
+      />
+    </div>
+    <div className="space-y-1">
+      <label className="block text-xs text-gray-300 font-semibold">Subtítulo do Banner</label>
+      <input
+        type="text"
+        placeholder="Ex.: Autenticidade garantida, entrega expressa e 5% OFF no PIX."
+        className="input w-full"
+        value={banner?.subtitle || ""}
+        onChange={(e) => setBanner((prev: any) => ({ ...prev, subtitle: e.target.value }))}
+      />
+    </div>
         <div className="flex items-center gap-3">
           <button
             type="button"

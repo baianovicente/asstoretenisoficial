@@ -4,10 +4,13 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
+const DEFAULT_TITLE = "Os tênis mais desejados do Brasil";
+const DEFAULT_SUBTITLE = "Autenticidade garantida, entrega expressa e 5% OFF no PIX.";
+
 export default function Hero() {
   const [banner, setBanner] = useState({
-    title: "Os tênis mais desejados do Brasil",
-    subtitle: "Autenticidade garantida, entrega expressa e 5% OFF no PIX.",
+    title: DEFAULT_TITLE,
+    subtitle: DEFAULT_SUBTITLE,
     image_url: "",
     background_image: "",
     product_image: "",
@@ -21,9 +24,11 @@ export default function Hero() {
           setBanner(prev => ({
             ...prev,
             ...data,
-            title: data.title ? data.title : prev.title,
-            subtitle: data.subtitle ? data.subtitle : prev.subtitle,
-            image_url: data.image_url || data.background_image || data.product_image || "",
+            title: typeof data.title === "string" && data.title.trim() !== "" ? data.title : DEFAULT_TITLE,
+            subtitle: typeof data.subtitle === "string" && data.subtitle.trim() !== "" ? data.subtitle : DEFAULT_SUBTITLE,
+            image_url: data.image_url || data.background_image || "",
+            background_image: data.background_image || data.image_url || "",
+            product_image: data.product_image || "",
           }));
         }
       })
@@ -31,7 +36,7 @@ export default function Hero() {
   }, []);
 
   const renderTitle = () => {
-    const title = banner.title || "";
+    const title = banner.title || DEFAULT_TITLE;
     const parts = title.split(/(desejados|desejado)/i);
     return parts.map((part, i) =>
       /desejados|desejado/i.test(part) ? (
@@ -42,12 +47,24 @@ export default function Hero() {
     );
   };
 
-  const activeImage = banner.image_url || banner.background_image || banner.product_image;
+  const bgImage = banner.background_image || banner.image_url;
 
   return (
-    <section className="relative bg-gradient-to-br from-as-black via-as-gray to-as-black overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 py-16 md:py-24 grid md:grid-cols-2 gap-8 items-center">
-        <div className="animate-fade-in">
+    <section className="relative bg-as-black overflow-hidden min-h-[366px] flex items-center">
+      {bgImage && (
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-cover bg-center scale-100"
+          style={{ backgroundImage: `url("${bgImage}")` }}
+        />
+      )}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-gradient-to-r from-as-black/90 via-as-black/65 to-as-black/35"
+      />
+
+      <div className="relative z-10 max-w-7xl w-full mx-auto px-4 py-16 md:py-24">
+        <div className="max-w-2xl animate-fade-in">
           <span className="inline-block bg-as-green/20 text-as-green text-xs font-bold px-3 py-1 rounded-full mb-4">
             🔥 LANÇAMENTOS 2025
           </span>
@@ -66,16 +83,6 @@ export default function Hero() {
             </Link>
           </div>
         </div>
-
-        {activeImage && (
-          <div className="relative animate-slide-up">
-            <img
-              src={activeImage}
-              alt="Tênis em destaque"
-              className="w-full aspect-[1.85/1] object-cover rounded-2xl shadow-[0_0_60px_rgba(0,200,83,0.4)] rotate-2 hover:rotate-0 transition-transform duration-500"
-            />
-          </div>
-        )}
       </div>
     </section>
   );
