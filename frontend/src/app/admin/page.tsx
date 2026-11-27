@@ -243,8 +243,8 @@ export default function AdminPage() {
             }
           }}
         />
-        {banner.image_url && (
-          <img src={banner.image_url} alt="Prévia do Banner" className="max-h-60 rounded-lg object-contain bg-black/30 p-2" />
+        {banner?.image_url && (
+          <img src={banner?.image_url || ""} alt="Prévia do Banner" className="max-h-60 rounded-lg object-contain bg-black/30 p-2" />
         )}
         <button
           type="button"
@@ -256,7 +256,7 @@ export default function AdminPage() {
               const res = await fetch(API + "/banners", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ...banner, image_url: banner.image_url || "" })
+                body: JSON.stringify({ ...banner, image_url: banner?.image_url || "" })
               });
               if (!res.ok) throw new Error("Falha ao salvar banner");
               setBannerMsg("✅ Banner salvo com sucesso!");
