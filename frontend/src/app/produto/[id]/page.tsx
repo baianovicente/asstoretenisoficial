@@ -66,7 +66,7 @@ export default function ProdutoPage() {
       brand: product.brand,
       category: product.category,
       price: Number(product.price),
-      promoPrice: product.promo_price ? Number(product.promo_price) : null,
+      promoPrice: product.promo_price ? Number(product.promo_price) : undefined,
       images: [activeVariant.image_url],
       sizes: activeVariant.sizes,
       style: (product as any)?.style || (activeVariant as any)?.style || "casual",

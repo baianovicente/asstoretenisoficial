@@ -17,11 +17,10 @@ function formatProduct(p: any): Product {
     brand: p.brand,
     category: p.category,
     price: Number(p.price),
-    promoPrice: p.promo_price ? Number(p.promo_price) : null,
+    promoPrice: p.promo_price ? Number(p.promo_price) : undefined,
     stock: p.stock,
     sizes: p.variants?.[0]?.sizes || [],
     images: [mainImage], // A imagem principal vai ser a da primeira cor
-    description: p.description,
     isNew: p.is_new,
     isLastUnits: p.is_last_units,
     style: p.category,
