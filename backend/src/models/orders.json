@@ -1,0 +1,83 @@
+[
+  {
+    "id": "AS1794630484241",
+    "status": "pending",
+    "createdAt": "2026-11-14T04:28:04.241Z",
+    "items": [
+      {
+        "id": "3",
+        "name": "New Balance 9060",
+        "brand": "New Balance",
+        "price": 1299.9,
+        "promoPrice": 1099.9,
+        "images": [
+          "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519"
+        ],
+        "sizes": [
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42
+        ],
+        "category": "lancamentos",
+        "style": "casual",
+        "stock": 8,
+        "isLastUnits": true,
+        "quantity": 1,
+        "selectedSize": 36
+      }
+    ],
+    "total": 1044.9050000000002,
+    "frete": 0,
+    "paymentMethod": "pix",
+    "customer": {
+      "name": "Vicente Vinicius ",
+      "email": "01@gmail.com",
+      "phone": "92991582434",
+      "address": "rua antonio ribeiro da silva, 13 - petropolis, Manaus/Am"
+    }
+  },
+  {
+    "id": "AS1795021460172",
+    "status": "pending",
+    "createdAt": "2026-11-18T17:04:20.172Z",
+    "items": [
+      {
+        "id": "6",
+        "name": "Adidas Samba OG",
+        "brand": "Adidas",
+        "price": 799.9,
+        "images": [
+          "https://images.unsplash.com/photo-1600269452121-4f2416e55c28"
+        ],
+        "sizes": [
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42
+        ],
+        "category": "lancamentos",
+        "style": "casual",
+        "stock": 5,
+        "isLastUnits": true,
+        "quantity": 1,
+        "selectedSize": 36
+      }
+    ],
+    "total": 799.9,
+    "frete": 0,
+    "paymentMethod": "pix",
+    "customer": {
+      "name": "",
+      "email": "",
+      "phone": "",
+      "address": ",  - , /"
+    }
+  }
+]

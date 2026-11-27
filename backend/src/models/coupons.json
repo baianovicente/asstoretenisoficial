@@ -1,0 +1,18 @@
+[
+  {
+    "id": "1",
+    "code": "BEMVINDO10",
+    "type": "percent",
+    "value": 10,
+    "minOrder": 0,
+    "active": true
+  },
+  {
+    "id": "2",
+    "code": "AS5",
+    "type": "percent",
+    "value": 5,
+    "minOrder": 0,
+    "active": true
+  }
+]
