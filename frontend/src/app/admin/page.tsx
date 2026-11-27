@@ -43,12 +43,25 @@ export default function AdminPage() {
     }
   }, []);
 
+  const toArray = (v: any): any[] =>
+  Array.isArray(v)
+    ? v
+    : Array.isArray(v?.orders)
+    ? v.orders
+    : Array.isArray(v?.products)
+    ? v.products
+    : Array.isArray(v?.coupons)
+    ? v.coupons
+    : Array.isArray(v?.data)
+    ? v.data
+    : [];
+
   const fetchData = async () => {
     try {
       const [pRes, oRes, cRes] = await Promise.all([fetch(API + "/products"), fetch(API + "/orders"), fetch(API + "/coupons")]);
-      setProducts(await pRes.json() || []);
-      setOrders(await oRes.json() || []);
-      setCoupons(await cRes.json() || []);
+      setProducts(toArray(await pRes.json()));
+      setOrders(toArray(await oRes.json()));
+      setCoupons(toArray(await cRes.json()));
     } catch (err) { console.error(err); }
   };
 
@@ -179,9 +192,9 @@ export default function AdminPage() {
 
         {tab === "dashboard" && (
           <div className="grid md:grid-cols-3 gap-4">
-            <div className="bg-as-gray p-6 rounded-xl"><p className="text-as-gray-light text-sm mb-2">Faturamento</p><p className="text-2xl font-black">{formatBRL(orders.reduce((s, o) => s + (Number(o.total)||0), 0))}</p></div>
-            <div className="bg-as-gray p-6 rounded-xl"><p className="text-as-gray-light text-sm mb-2">Pedidos</p><p className="text-2xl font-black text-as-green">{orders.length}</p></div>
-            <div className="bg-as-gray p-6 rounded-xl"><p className="text-as-gray-light text-sm mb-2">Produtos</p><p className="text-2xl font-black">{products.length}</p></div>
+            <div className="bg-as-gray p-6 rounded-xl"><p className="text-as-gray-light text-sm mb-2">Faturamento</p><p className="text-2xl font-black">{formatBRL((Array.isArray(orders) ? orders : []).reduce((s, o) => s + (Number(o.total)||0), 0))}</p></div>
+            <div className="bg-as-gray p-6 rounded-xl"><p className="text-as-gray-light text-sm mb-2">Pedidos</p><p className="text-2xl font-black text-as-green">{(Array.isArray(orders) ? orders.length : 0)}</p></div>
+            <div className="bg-as-gray p-6 rounded-xl"><p className="text-as-gray-light text-sm mb-2">Produtos</p><p className="text-2xl font-black">{(Array.isArray(products) ? products.length : 0)}</p></div>
           </div>
         )}
 
@@ -192,7 +205,7 @@ export default function AdminPage() {
                 <tr><th className="p-4">Produto</th><th className="p-4">Preço</th><th className="p-4">Cores</th><th className="p-4 text-right">Ações</th></tr>
               </thead>
               <tbody>
-                {products.map(p => (
+                {(Array.isArray(products) ? products : []).map(p => (
                   <tr key={p.id} className="border-t border-white/5">
                     <td className="p-4 flex items-center gap-3">
                       <div className="w-10 h-10 rounded bg-black/50 flex items-center justify-center overflow-hidden">
@@ -230,7 +243,7 @@ export default function AdminPage() {
             <table className="w-full text-left">
               <thead className="bg-black/30 text-as-gray-light text-sm"><tr><th className="p-4">Código</th><th className="p-4">Desconto</th><th className="p-4 text-right">Ações</th></tr></thead>
               <tbody>
-                {coupons.map(c => (
+                {(Array.isArray(coupons) ? coupons : []).map(c => (
                   <tr key={c.id} className="border-t border-white/5">
                     <td className="p-4 font-bold text-as-green">{c.code}</td>
                     <td className="p-4">{c.type === "percent" ? c.value + "%" : formatBRL(c.value)}</td>
@@ -244,7 +257,7 @@ export default function AdminPage() {
 
         {tab === "pedidos" && (
           <div className="space-y-4">
-            {orders.map(o => (
+            {(Array.isArray(orders) ? orders : []).map(o => (
               <div key={o.id} className="bg-as-gray p-4 rounded-xl flex justify-between items-center">
                 <div><p className="font-bold">#{o.id}</p><p className="text-sm text-as-gray-light">{new Date(o.created_at).toLocaleString("pt-BR")}</p></div>
                 <p className="font-black text-as-green">{formatBRL(o.total)}</p>
