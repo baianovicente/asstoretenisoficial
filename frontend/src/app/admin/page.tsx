@@ -17,6 +17,8 @@ export default function AdminPage() {
   const [coupons, setCoupons] = useState<any[]>([]);
   const [settings, setSettings] = useState({ mpAccessToken: "", pixKey: "" });
   const [banner, setBanner] = useState({ title: "", subtitle: "", image_url: "" });
+  const [savingBanner, setSavingBanner] = useState(false);
+  const [bannerMsg, setBannerMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -179,6 +181,7 @@ export default function AdminPage() {
           <button onClick={() => setTab("produtos")} className={`w-full flex items-center gap-3 p-3 rounded-lg transition ${tab === "produtos" ? "bg-as-green text-black font-bold" : "hover:bg-black/20"}`}><Package size={20} /> Produtos</button>
           <button onClick={() => setTab("cupons")} className={`w-full flex items-center gap-3 p-3 rounded-lg transition ${tab === "cupons" ? "bg-as-green text-black font-bold" : "hover:bg-black/20"}`}><Tag size={20} /> Cupons</button>
           <button onClick={() => setTab("pedidos")} className={`w-full flex items-center gap-3 p-3 rounded-lg transition ${tab === "pedidos" ? "bg-as-green text-black font-bold" : "hover:bg-black/20"}`}><ShoppingCart size={20} /> Pedidos</button>
+          <button onClick={() => setTab("banner")} className={`w-full flex items-center gap-3 p-3 rounded-lg transition ${tab === "banner" ? "bg-as-green text-black font-bold" : "hover:bg-black/20"}`}><ImageIcon size={20} /> Banner</button>
         </nav>
         <button onClick={logout} className="mt-auto flex items-center gap-2 text-red-400 p-3"><LogOut size={20} /> Sair</button>
       </aside>
@@ -197,6 +200,79 @@ export default function AdminPage() {
             <div className="bg-as-gray p-6 rounded-xl"><p className="text-as-gray-light text-sm mb-2">Produtos</p><p className="text-2xl font-black">{(Array.isArray(products) ? products.length : 0)}</p></div>
           </div>
         )}
+
+    {tab === "banner" && (
+      <div className="bg-as-gray p-6 rounded-xl max-w-2xl space-y-4">
+        <h3 className="text-lg font-bold">Imagem do Banner</h3>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => document.getElementById("singleBannerInput")?.click()}
+            className="px-4 py-2 rounded-lg bg-as-green text-black text-sm font-semibold hover:opacity-90"
+          >
+            Fazer upload da imagem
+          </button>
+          <span className="text-xs text-gray-400">Preserva informações e botões da frente</span>
+        </div>
+        <input
+          type="file"
+          id="singleBannerInput"
+          accept="image/*"
+          className="hidden"
+          onChange={async (e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            setBannerMsg("Enviando imagem do banner...");
+            try {
+              const buffer = await file.arrayBuffer();
+              const res = await fetch(API + "/banners/upload", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/octet-stream",
+                  "x-filename": file.name
+                },
+                body: buffer
+              });
+              const data = await res.json();
+              if (!res.ok || !data?.url) throw new Error(data?.error || "Falha no upload");
+              setBanner((prev: any) => ({ ...prev, image_url: data.url, background_image: data.url }));
+              try { window.localStorage.removeItem("asstore_hero_banner_url_v1"); } catch {}
+              setBannerMsg("✅ Imagem enviada (" + data.url + "). Clique em Salvar para publicar.");
+            } catch (err: any) {
+              setBannerMsg("❌ Erro no upload: " + (err?.message || "tente novamente"));
+            }
+          }}
+        />
+        {banner.image_url && (
+          <img src={banner.image_url} alt="Prévia do Banner" className="max-h-60 rounded-lg object-contain bg-black/30 p-2" />
+        )}
+        <button
+          type="button"
+          disabled={savingBanner}
+          onClick={async () => {
+            setSavingBanner(true);
+            setBannerMsg("");
+            try {
+              const res = await fetch(API + "/banners", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ...banner, image_url: banner.image_url || "" })
+              });
+              if (!res.ok) throw new Error("Falha ao salvar banner");
+              setBannerMsg("✅ Banner salvo com sucesso!");
+            } catch (err: any) {
+              setBannerMsg("❌ Erro ao salvar: " + (err?.message || "tente novamente"));
+            } finally {
+              setSavingBanner(false);
+            }
+          }}
+          className="btn-primary px-5 py-2.5 text-sm"
+        >
+          {savingBanner ? "Salvando..." : "Salvar Banner"}
+        </button>
+        {bannerMsg && <p className="text-sm text-as-gray-light">{bannerMsg}</p>}
+      </div>
+    )}
 
         {tab === "produtos" && (
           <div className="bg-as-gray rounded-xl overflow-hidden">
