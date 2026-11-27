@@ -9,12 +9,24 @@ export default function Hero() {
     title: "Os tênis mais desejados do Brasil",
     subtitle: "Autenticidade garantida, entrega expressa e 5% OFF no PIX.",
     image_url: "",
+    background_image: "",
+    product_image: "",
   });
 
   useEffect(() => {
     fetch("http://localhost:4000/api/banners")
       .then(r => r.json())
-      .then(data => { if (data && data.title) setBanner(data); })
+      .then(data => {
+        if (data && typeof data === "object") {
+          setBanner(prev => ({
+            ...prev,
+            ...data,
+            title: data.title ? data.title : prev.title,
+            subtitle: data.subtitle ? data.subtitle : prev.subtitle,
+            image_url: data.image_url || data.background_image || data.product_image || "",
+          }));
+        }
+      })
       .catch(() => {});
   }, []);
 
@@ -29,6 +41,8 @@ export default function Hero() {
       )
     );
   };
+
+  const activeImage = banner.image_url || banner.background_image || banner.product_image;
 
   return (
     <section className="relative bg-gradient-to-br from-as-black via-as-gray to-as-black overflow-hidden">
@@ -53,12 +67,12 @@ export default function Hero() {
           </div>
         </div>
 
-        {banner.image_url && (
+        {activeImage && (
           <div className="relative animate-slide-up">
             <img
-              src={banner.image_url}
+              src={activeImage}
               alt="Tênis em destaque"
-              className="w-full rounded-2xl shadow-[0_0_60px_rgba(0,200,83,0.4)] rotate-2 hover:rotate-0 transition-transform duration-500"
+              className="w-full aspect-[1.85/1] object-cover rounded-2xl shadow-[0_0_60px_rgba(0,200,83,0.4)] rotate-2 hover:rotate-0 transition-transform duration-500"
             />
           </div>
         )}
