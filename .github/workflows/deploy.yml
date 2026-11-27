@@ -1,0 +1,27 @@
+name: Deploy
+
+on:
+push:
+branches: [main]
+
+jobs:
+deploy-vps:
+runs-on: ubuntu-latest
+steps:
+  - name: Deploy to VPS over SSH
+    uses: appleboy/ssh-action@v1.1.0
+    with:
+      host: ${{ secrets.VPS_HOST }}
+      username: ${{ secrets.VPS_USER }}
+      key: ${{ secrets.VPS_SSH_KEY }}
+      port: 22
+      script: |
+        set -e
+        cd /var/www/asstore
+        git fetch origin main
+        git reset --hard origin/main
+        cd /var/www/asstore/frontend
+        rm -rf .next
+        npm run build
+        pm2 restart all
+        pm2 status
