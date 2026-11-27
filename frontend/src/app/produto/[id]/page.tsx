@@ -68,7 +68,9 @@ export default function ProdutoPage() {
       price: Number(product.price),
       promoPrice: product.promo_price ? Number(product.promo_price) : null,
       images: [activeVariant.image_url],
-      sizes: activeVariant.sizes
+      sizes: activeVariant.sizes,
+      style: (product as any)?.style || (activeVariant as any)?.style || "casual",
+      stock: Number((activeVariant as any)?.stock ?? (product as any)?.stock ?? 10)
     };
     addItem(cartProduct, selectedSize);
     openCart();
