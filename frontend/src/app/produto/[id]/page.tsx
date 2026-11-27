@@ -1,5 +1,6 @@
 'use client';
 
+import { API_URL } from "../../../lib/api";
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -29,7 +30,7 @@ export default function ProdutoPage() {
   const { products } = useProducts();
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/products/" + params.id)
+    fetch(`${API_URL}/api/products/` + params.id)
       .then(r => r.json())
       .then((p) => {
         setProduct(p);

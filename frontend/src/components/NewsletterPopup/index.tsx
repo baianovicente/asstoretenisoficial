@@ -1,5 +1,6 @@
 'use client';
 
+import { API_URL } from "../../lib/api";
 import { useState, useEffect } from 'react';
 import { Gift, X } from 'lucide-react';
 
@@ -44,7 +45,7 @@ export default function NewsletterPopup() {
 
     setSaving(true);
     try {
-      const res = await fetch('http://localhost:4000/api/newsletter', {
+      const res = await fetch(`${API_URL}/api/newsletter`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

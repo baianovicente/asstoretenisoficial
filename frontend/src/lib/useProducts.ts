@@ -1,9 +1,10 @@
 'use client';
 
+import { API_URL } from "./api";
 import { useState, useEffect } from "react";
 import { Product } from "@/types";
 
-const API = "http://localhost:4000/api";
+const API = `${API_URL}/api`;
 
 function formatProduct(p: any): Product {
   // Pega a imagem da PRIMEIRA variação cadastrada

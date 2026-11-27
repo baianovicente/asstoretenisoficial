@@ -1,5 +1,6 @@
 'use client';
 
+import { API_URL } from "../../lib/api";
 import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Truck, CreditCard, QrCode, CheckCircle2, Copy, Loader2 } from 'lucide-react';
@@ -62,7 +63,7 @@ export default function CheckoutPage() {
     };
 
     try {
-      const ordersRes = await fetch('http://localhost:4000/api/orders', {
+      const ordersRes = await fetch(`${API_URL}/api/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderPayload),
@@ -71,7 +72,7 @@ export default function CheckoutPage() {
       const orderData = await ordersRes.json();
 
       if (payment === 'pix') {
-        const pixRes = await fetch('http://localhost:4000/api/payments/pix', {
+        const pixRes = await fetch(`${API_URL}/api/payments/pix`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

@@ -1,5 +1,6 @@
 'use client';
 
+import { API_URL } from "../../lib/api";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -17,7 +18,7 @@ export default function Hero() {
   });
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/banners")
+    fetch(`${API_URL}/api/banners`)
       .then(r => r.json())
       .then(data => {
         if (data && typeof data === "object") {

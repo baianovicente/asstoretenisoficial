@@ -1,11 +1,12 @@
 'use client';
 
+import { API_URL } from "../../lib/api";
 import { useState, useEffect, useMemo } from "react";
 import { Package, ShoppingCart, DollarSign, Plus, LogOut, Lock, X, Trash2, Settings, Upload, Tag, Users, Copy, TrendingUp, Edit, ImageIcon } from "lucide-react";
 import { formatBRL } from "@/lib/format";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
-const API = "http://localhost:4000/api";
+const API = `${API_URL}/api`;
 
 export default function AdminPage() {
   const [logged, setLogged] = useState(false);

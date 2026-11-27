@@ -1,5 +1,6 @@
 'use client';
 
+import { API_URL } from "../../lib/api";
 import { useState, useEffect } from "react";
 import { ShoppingBag, X, CheckCircle2 } from "lucide-react";
 
@@ -11,7 +12,7 @@ export default function RecentSalesToast() {
   useEffect(() => {
     const checkNewOrders = async () => {
       try {
-        const res = await fetch("http://localhost:4000/api/orders");
+        const res = await fetch(`${API_URL}/api/orders`);
         if (!res.ok) return;
         const orders = await res.json();
         if (!orders || orders.length === 0) return;
