@@ -6,21 +6,38 @@ const pool = require("../db");
 
 const BANNERS_DIR = path.join(__dirname, "../../../frontend/public/banners");
 
+function normalizeOpacity(val) {
+const n = Number(val);
+if (!Number.isFinite(n)) return 100;
+return Math.max(0, Math.min(100, Math.round(n)));
+}
+
+async function ensureOpacityColumn() {
+await pool.query(
+"ALTER TABLE banners ADD COLUMN IF NOT EXISTS opacity INTEGER NOT NULL DEFAULT 100"
+);
+}
+
 router.get("/", async (req, res) => {
-  try {
+try {
+await ensureOpacityColumn();
 const result = await pool.query(
   "SELECT * FROM banners WHERE active = true ORDER BY id DESC LIMIT 1"
 );
-res.json(result.rows[0] || null);
-  } catch (err) {
+const row = result.rows[0] || null;
+if (row) {
+  row.opacity = normalizeOpacity(row.opacity);
+}
+res.json(row);
+} catch (err) {
 res.status(500).json({ error: err.message });
-  }
+}
 });
 
 router.post(
-  "/upload",
-  express.raw({ type: "application/octet-stream", limit: "15mb" }),
-  async (req, res) => {
+"/upload",
+express.raw({ type: "application/octet-stream", limit: "15mb" }),
+async (req, res) => {
 try {
   if (!Buffer.isBuffer(req.body) || req.body.length === 0) {
     return res.status(400).json({ error: "Arquivo vazio ou inválido" });
@@ -40,23 +57,35 @@ try {
 } catch (err) {
   return res.status(500).json({ error: err.message });
 }
-  }
+}
 );
 
 router.post("/", async (req, res) => {
-  const { title, subtitle, image_url, background_image, product_image } = req.body;
-  try {
+const { title, subtitle, image_url, background_image, product_image, opacity } = req.body;
+const safeOpacity = normalizeOpacity(opacity);
+
+try {
+await ensureOpacityColumn();
 await pool.query("UPDATE banners SET active = false WHERE active = true");
 const result = await pool.query(
-  `INSERT INTO banners (title, subtitle, image_url, background_image, product_image, active)
-   VALUES ($1, $2, $3, $4, $5, true)
+  `INSERT INTO banners (title, subtitle, image_url, background_image, product_image, opacity, active)
+   VALUES ($1, $2, $3, $4, $5, $6, true)
    RETURNING *`,
-  [title || "", subtitle || "", image_url || "", background_image || "", product_image || ""]
+  [
+    title || "",
+    subtitle || "",
+    image_url || "",
+    background_image || "",
+    product_image || "",
+    safeOpacity,
+  ]
 );
-res.status(201).json(result.rows[0]);
-  } catch (err) {
+const created = result.rows[0];
+if (created) created.opacity = normalizeOpacity(created.opacity);
+res.status(201).json(created);
+} catch (err) {
 res.status(500).json({ error: err.message });
-  }
+}
 });
 
 module.exports = router;

@@ -17,7 +17,7 @@ export default function AdminPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [coupons, setCoupons] = useState<any[]>([]);
   const [settings, setSettings] = useState({ mpAccessToken: "", pixKey: "" });
-  const [banner, setBanner] = useState({ title: "", subtitle: "", image_url: "" });
+  const [banner, setBanner] = useState<{ title: string; subtitle: string; image_url: string; background_image?: string; opacity?: number }>({ title: "", subtitle: "", image_url: "", background_image: "", opacity: 100 });
   const [savingBanner, setSavingBanner] = useState(false);
   const [bannerMsg, setBannerMsg] = useState("");
   const [loading, setLoading] = useState(false);
@@ -265,8 +265,39 @@ export default function AdminPage() {
           }}
         />
         {banner?.image_url && (
-          <img src={banner?.image_url || ""} alt="Prévia do Banner" className="max-h-60 rounded-lg object-contain bg-black/30 p-2" />
+          <div className="my-2 rounded-lg overflow-hidden border border-white/10 bg-[repeating-conic-gradient(#262626_0%_25%,#141414_0%_50%)] bg-[length:16px_16px] p-2 max-w-md"><img src={banner?.image_url || ""} alt="Prévia do Banner" className="max-h-60 rounded-lg object-contain bg-black/30 p-2"  style={{ opacity: (banner?.opacity ?? 100) / 100 }} /></div>
         )}
+    <div className="space-y-2 my-3 max-w-md">
+      <div className="flex items-center justify-between text-xs text-gray-300">
+        <label htmlFor="bannerOpacitySlider">Opacidade do banner</label>
+        <span className="font-semibold text-white">{banner?.opacity ?? 100}%</span>
+      </div>
+      <input
+        id="bannerOpacitySlider"
+        type="range"
+        min={0}
+        max={100}
+        value={banner?.opacity ?? 100}
+        onChange={(e) =>
+          setBanner((prev: any) => ({ ...prev, opacity: Number(e.target.value) }))
+        }
+        className="w-full accent-as-green cursor-pointer"
+      />
+      <div className="flex flex-wrap gap-2">
+        {[0, 25, 50, 75, 100].map((val) => (
+          <button
+            key={val}
+            type="button"
+            onClick={() =>
+              setBanner((prev: any) => ({ ...prev, opacity: val }))
+            }
+            className={(banner?.opacity ?? 100) === val ? "px-2.5 py-1 rounded text-xs font-bold bg-as-green text-black" : "px-2.5 py-1 rounded text-xs bg-black/40 border border-white/15 text-gray-300"}
+          >
+            {val}%
+          </button>
+        ))}
+      </div>
+    </div>
         <button
           type="button"
           disabled={savingBanner}
@@ -277,7 +308,7 @@ export default function AdminPage() {
               const res = await fetch(API + "/banners", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ...banner, image_url: banner?.image_url || "" })
+                body: JSON.stringify({ ...banner, image_url: banner?.image_url || "", opacity: banner?.opacity ?? 100 })
               });
               if (!res.ok) throw new Error("Falha ao salvar banner");
               setBannerMsg("✅ Banner salvo com sucesso!");
